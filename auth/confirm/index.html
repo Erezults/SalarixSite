@@ -127,6 +127,7 @@
   var rawType = hash.get('type') || qp.get('type');   // may be null (esp. PKCE ?code=)
   var type = rawType || 'signup';
   var code = qp.get('code');
+  var tokenHash = qp.get('token_hash');   // token_hash email links (2026-09-21): redeemed by the app via verifyOtp, any device, OTP lifetime
   var errorDesc = hash.get('error_description') || qp.get('error_description');
   var scheme = qp.get('scheme') || DEFAULT_SCHEME;
   var AUTH_BASE = SUPABASE_URL.replace(/\/$/, '') + '/auth/v1';
@@ -194,6 +195,7 @@
   }
   if (at) { relay(scheme + '://auth/confirm#access_token=' + at + '&refresh_token=' + encodeURIComponent(rt || '') + '&type=' + type); return; }
   if (code) { relay(scheme + '://auth/confirm?code=' + encodeURIComponent(code) + (rawType ? '&type=' + rawType : '')); return; }
+  if (tokenHash) { relay(scheme + '://auth/confirm?token_hash=' + encodeURIComponent(tokenHash) + '&type=' + encodeURIComponent(rawType || 'signup')); return; }
 
   show('error');
 })();
